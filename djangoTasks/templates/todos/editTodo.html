@@ -6,4 +6,14 @@
         {{ form.as_p }}
         <input type="submit" value="Edit Todo">
     </form>
+
+    <script>
+        $(document).ready(function() {
+            $(".jalali-date-input").persianDatepicker({
+                format: 'YYYY/MM/DD',
+                altField: '#altField',
+                altFormat: 'gregorian'
+            });
+        });
+    </script>
 {% endblock %}

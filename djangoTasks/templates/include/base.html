@@ -1,11 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block Title %}{% endblock %}</title>
-</head>
-<body>
-    {% include "include/navbar.html" %}
-    {% block Content %}{% endblock %}
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block Title %}{% endblock %}</title>
+        <link rel="stylesheet" href="https://unpkg.com/persian-datepicker@latest/dist/css/persian-datepicker.min.css">
+    </head>
+    <body>
+        {% include "include/navbar.html" %}
+        {% block Content %}{% endblock %}
+        <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+        <script src="https://unpkg.com/persian-date@latest/dist/persian-date.min.js"></script>
+        <script src="https://unpkg.com/persian-datepicker@latest/dist/js/persian-datepicker.min.js"></script>
+        <script>
+        $(document).ready(function() {
+            $(".persian-date-picker").pDatepicker({
+                format: 'YYYY/MM/DD HH:mm:ss',
+                viewMode: 'year',
+                altField: '#altField',
+                altFormat: 'gregorian',
+                minDate: new persianDate().valueOf(),
+                timePicker: {
+                    enabled: true,
+                    meridiem: {
+                        enabled: true
+                    }
+                },
+                observer: false,
+                calendar: {
+                    persian: {
+                        locale: 'en'
+                    }
+                }
+            });
+        });
+        </script>
+    </body>
 </html>

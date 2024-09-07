@@ -1,4 +1,4 @@
-from django.forms import ModelForm, Textarea
+from django.forms import ModelForm, Textarea, TextInput
 from .models import TodoModel
 
 
@@ -8,6 +8,7 @@ class AddTodoForm(ModelForm):
         fields = ["title", "description", "completed", "deadline"]
         widgets = {
             "description": Textarea(attrs={"cols": 100, "rows": 40}),
+            "deadline": TextInput(attrs={"class": "persian-date-picker"}),
         }
         labels = {
             "title": "Title",
