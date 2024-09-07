@@ -1,9 +1,11 @@
 {% extends "include/base.html" %}
 
 {% block Content %}
-    <form method="post">
+    <form class="rounded-2 d-flex flex-column p-4 m-2 align-items-center col-6 border border-primary-subtle"
+          style="background-color: hsl(210, 50%, 92%);"
+          method="post" data-bs-theme="dark">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Add Todo">
+        <button class="btn btn-success" type="submit">Add Todo</button>
     </form>
 {% endblock %}

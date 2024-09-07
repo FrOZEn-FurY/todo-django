@@ -20,6 +20,7 @@ class ShowTodos(View):
             if hour >= 24:
                 hour -= 24
             todo.deadline = JalaliDatetime(todo.deadline).strftime(f"%Y/%m/%d {hour:02}:{minute:02}:{second:02}")
+        todos = sorted(todos, key=lambda todo: todo.deadline)
         return render(request, self.template_url, {"todos": todos})
 
 
@@ -62,8 +63,13 @@ class EditTodo(View):
         return render(request, self.template_url, {"form": form})
 
     def post(self, request, id):
+        data = {}
+        data["title"] = request.POST.get("title")
+        data["description"] = request.POST.get("description")
+        data["completed"] = request.POST.get("completed")
+        data["deadline"] = JalaliDatetime.strptime(request.POST.get("deadline"), "%Y/%m/%d %H:%M:%S").todatetime()
         todo = TodoModel.objects.get(id=id)
-        form = AddTodoForm(request.POST, instance=todo)
+        form = AddTodoForm(data, instance=todo)
         if form.is_valid():
             form.save()
             return redirect('todos:showTodos')
