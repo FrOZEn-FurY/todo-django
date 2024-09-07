@@ -1,0 +1,14 @@
+{% extends "include/base.html" %}
+
+{% block Content %}
+    {% for todo in todos %}
+        <p>{{ todo.title }}</p>
+        <p>{{ todo.description }}</p>
+        <p>{{ todo.completed }}</p>
+        <p>{{ todo.deadline }}</p>
+        <a href="{% url 'todos:editTodo' todo.id %}">Edit</a>
+        <a href="{% url 'todos:deleteTodo' todo.id %}">Delete</a>
+    {% empty %}
+        <h1>There are no todos yet.</h1>
+    {% endfor %}
+{% endblock %}
