@@ -1,16 +1,17 @@
-from django.shortcuts import render, redirect
-from django.views import View
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import TodoModel
 from .forms import AddTodoForm
 from khayyam import JalaliDatetime
 
 
-class ShowTodos(View):
-    template_url = "todos/showTodo.html"
+class ShowTodos(ListView):
+    template_name = "todos/showTodo.html"
+    model = TodoModel
+    context_object_name = "todos"
 
-    def get(self, request):
-        todos = TodoModel.objects.all()
-        for todo in todos:
+    def get_context_data(self, *, object_list=None, **kwargs):
+        todos = super().get_context_data()
+        for todo in todos["object_list"]:
             hour, minute, second = todo.deadline.time().hour, todo.deadline.time().minute, todo.deadline.time().second
             minute += 30
             if minute >= 60:
@@ -20,57 +21,25 @@ class ShowTodos(View):
             if hour >= 24:
                 hour -= 24
             todo.deadline = JalaliDatetime(todo.deadline).strftime(f"%Y/%m/%d {hour:02}:{minute:02}:{second:02}")
-        todos = sorted(todos, key=lambda todo: todo.deadline)
-        return render(request, self.template_url, {"todos": todos})
+        todos["object_list"] = sorted(todos["object_list"], key=lambda todo: todo.deadline)
+        return todos
 
 
-class AddTodo(View):
-    template_url = "todos/addTodo.html"
-
-    def get(self, request):
-        form = AddTodoForm()
-        return render(request, self.template_url, {"form": form})
-
-    def post(self, request):
-        data = {}
-        data["title"] = request.POST.get("title")
-        data["description"] = request.POST.get("description")
-        data["completed"] = request.POST.get("completed")
-        data["deadline"] = JalaliDatetime.strptime(request.POST.get("deadline"), "%Y/%m/%d %H:%M:%S").todatetime()
-        form = AddTodoForm(data)
-        if form.is_valid():
-            todo = TodoModel.objects.create(title=form.cleaned_data["title"],
-                                            description=form.cleaned_data["description"],
-                                            completed=form.cleaned_data["completed"],
-                                            deadline=form.cleaned_data["deadline"])
-            todo.save()
-            return redirect('todos:showTodos')
-        return render(request, self.template_url, {"form": form})
+class AddTodo(CreateView):
+    template_name = "todos/addTodo.html"
+    model = TodoModel
+    form_class = AddTodoForm
+    success_url = '/'
 
 
-class DeleteTodo(View):
-    def get(self, request, id):
-        todo = TodoModel.objects.get(id=id)
-        todo.delete()
-        return redirect('todos:showTodos')
+class DeleteTodo(DeleteView):
+    model = TodoModel
+    success_url = '/'
 
 
-class EditTodo(View):
-    template_url = 'todos/editTodo.html'
+class EditTodo(UpdateView):
+    template_name = 'todos/editTodo.html'
+    model = TodoModel
+    form_class = AddTodoForm
+    success_url = '/'
 
-    def get(self, request, id):
-        form = AddTodoForm(instance=TodoModel.objects.get(id=id))
-        return render(request, self.template_url, {"form": form})
-
-    def post(self, request, id):
-        data = {}
-        data["title"] = request.POST.get("title")
-        data["description"] = request.POST.get("description")
-        data["completed"] = request.POST.get("completed")
-        data["deadline"] = JalaliDatetime.strptime(request.POST.get("deadline"), "%Y/%m/%d %H:%M:%S").todatetime()
-        todo = TodoModel.objects.get(id=id)
-        form = AddTodoForm(data, instance=todo)
-        if form.is_valid():
-            form.save()
-            return redirect('todos:showTodos')
-        return render(request, self.template_url, {"form": form})

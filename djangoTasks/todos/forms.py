@@ -1,15 +1,18 @@
-from django.forms import ModelForm, Textarea, TextInput, CheckboxInput
+from django.forms import CharField, ModelForm, Textarea, TextInput, CheckboxInput
 from .models import TodoModel
+from khayyam import JalaliDatetime
 
 
 class AddTodoForm(ModelForm):
+    deadline = CharField(required=True, widget=TextInput(attrs={"class": "persian-date-picker form-control"}),
+                         label="Deadline", help_text="Date and time when the task should be finished.")
+
     class Meta:
         model = TodoModel
-        fields = ["title", "description", "completed", "deadline"]
+        exclude = ["deadline",]
         widgets = {
             "description": Textarea(attrs={"cols": 40, "rows": 15, "class": "form-control",
                                            "style": "resize: none;"}),
-            "deadline": TextInput(attrs={"class": "persian-date-picker form-control"}),
             "title": TextInput(attrs={"class": "form-control"}),
             "completed": CheckboxInput(attrs={"class": "form-check-input"}),
         }
@@ -17,10 +20,6 @@ class AddTodoForm(ModelForm):
             "title": "Title",
             "description": "Description",
             "completed": "Completed",
-            "deadline": "Deadline",
-        }
-        help_texts = {
-            "deadline": "Date and time when the task should be finished.",
         }
         error_messages = {
             "title": {
@@ -33,8 +32,16 @@ class AddTodoForm(ModelForm):
             "completed": {
                 "required": "Completed field is required.",
             },
-            "deadline": {
-                "required": "Deadline field is required.",
-                "max_value": "Deadline must be in the future.",
-            },
         }
+
+    def clean_deadline(self):
+        date = self.cleaned_data["deadline"]
+        date = JalaliDatetime.strptime(date, "%Y/%m/%d %H:%M:%S").todatetime()
+        return date
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.deadline = self.cleaned_data["deadline"]
+        if commit:
+            instance.save()
+        return instance

@@ -1,6 +1,7 @@
 {% extends "include/base.html" %}
 
 {% block Content %}
+    <h1 class="m-1 text-center fw-bold">Todos</h1>
     {% for todo in todos %}
         <section class="card col-3 m-2 p-4" data-bs-theme="dark">
             <p class="card-header text-center">{{ todo.title }}</p>
@@ -11,7 +12,10 @@
             </div>
             <div class="row justify-content-around p-3">
                 <a class="btn btn-outline-info col-4" href="{% url 'todos:editTodo' todo.id %}">Edit</a>
-                <a class="btn btn-outline-danger col-4" href="{% url 'todos:deleteTodo' todo.id %}">Delete</a>
+                <form class="col-5" method="POST" action="/delete-todo/{{ todo.id }}">
+                    {% csrf_token %}
+                    <button class="btn btn-outline-danger" style="width: 100%;" type="submit">Delete</button>
+                </form>
             </div>
         </section>
     {% empty %}
