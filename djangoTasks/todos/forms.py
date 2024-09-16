@@ -1,15 +1,19 @@
-from django.forms import CharField, ModelForm, Textarea, TextInput, CheckboxInput
+from django.forms import ModelForm, Textarea, TextInput, CheckboxInput
 from .models import TodoModel
-from khayyam import JalaliDatetime
+from jalali_date.widgets import AdminSplitJalaliDateTime
+from jalali_date.fields import SplitJalaliDateTimeField
 
 
 class AddTodoForm(ModelForm):
-    deadline = CharField(required=True, widget=TextInput(attrs={"class": "persian-date-picker form-control"}),
-                         label="Deadline", help_text="Date and time when the task should be finished.")
+    deadline = SplitJalaliDateTimeField(label="Deadline", widget=AdminSplitJalaliDateTime,
+                                        help_text="Time format must be HH:MM:SS, "
+                                                  "also it must be on the format of 24-hour clock. "
+                                                  "Make sure that the time you enter is greater than now.",
+                                        required=True)
 
     class Meta:
         model = TodoModel
-        exclude = ["deadline",]
+        fields = "__all__"
         widgets = {
             "description": Textarea(attrs={"cols": 40, "rows": 15, "class": "form-control",
                                            "style": "resize: none;"}),
@@ -31,17 +35,5 @@ class AddTodoForm(ModelForm):
             },
             "completed": {
                 "required": "Completed field is required.",
-            },
+            }
         }
-
-    def clean_deadline(self):
-        date = self.cleaned_data["deadline"]
-        date = JalaliDatetime.strptime(date, "%Y/%m/%d %H:%M:%S").todatetime()
-        return date
-
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        instance.deadline = self.cleaned_data["deadline"]
-        if commit:
-            instance.save()
-        return instance
