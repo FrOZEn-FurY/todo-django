@@ -37,6 +37,7 @@ INSTALLED_APPS = [
 
     # Third-party apps
     'jalali_date',
+    'django_celery_beat',
 
     # Build-in apps
     "django.contrib.admin",
@@ -147,3 +148,16 @@ JALALI_DATE_DEFAULTS = {
         }
     },
 }
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+CELERY_TIMEZONE = 'Asia/Tehran'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+

@@ -1,7 +1,7 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import TodoModel
 from .forms import AddTodoForm
-from khayyam import JalaliDatetime
+from khayyam import JalaliDate
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.shortcuts import redirect
@@ -15,15 +15,7 @@ class ShowTodos(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         todos = super().get_context_data()
         for todo in todos["object_list"]:
-            hour, minute, second = todo.deadline.time().hour, todo.deadline.time().minute, todo.deadline.time().second
-            minute += 30
-            if minute >= 60:
-                minute -= 60
-                hour += 1
-            hour += 3
-            if hour >= 24:
-                hour -= 24
-            todo.deadline = JalaliDatetime(todo.deadline).strftime(f"%Y/%m/%d {hour:02}:{minute:02}:{second:02}")
+            todo.deadline = JalaliDate(todo.deadline).strftime("%Y/%m/%d")
         todos["object_list"] = sorted(todos["object_list"], key=lambda todo: todo.deadline)
         return todos
 

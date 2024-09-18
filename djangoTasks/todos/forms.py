@@ -1,15 +1,12 @@
 from django.forms import ModelForm, Textarea, TextInput, CheckboxInput
 from .models import TodoModel
-from jalali_date.widgets import AdminSplitJalaliDateTime
-from jalali_date.fields import SplitJalaliDateTimeField
+from jalali_date.widgets import AdminJalaliDateWidget
+from jalali_date.fields import JalaliDateField
 
 
 class AddTodoForm(ModelForm):
-    deadline = SplitJalaliDateTimeField(label="Deadline", widget=AdminSplitJalaliDateTime,
-                                        help_text="Time format must be HH:MM:SS, "
-                                                  "also it must be on the format of 24-hour clock. "
-                                                  "Make sure that the time you enter is greater than now.",
-                                        required=True)
+    deadline = JalaliDateField(label="Deadline", widget=AdminJalaliDateWidget,
+                               help_text="Make sure that the time you enter is greater than now.", required=True)
 
     class Meta:
         model = TodoModel

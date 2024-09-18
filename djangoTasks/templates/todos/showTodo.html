@@ -8,7 +8,7 @@
             <p class="card-body">{{ todo.description }}</p>
             <div class="card-footer row justify-content-around">
                 <p class="col-6">{% if todo.completed %} Completed {% else %} Not Completed {% endif %}</p>
-                <p class="col-6">{{ todo.deadline }}</p>
+                <p class="col-6 text-center">Deadline: {{ todo.deadline }}</p>
             </div>
             <div class="row justify-content-around p-3">
                 <a class="btn btn-outline-info col-4" href="{% url 'todos:editTodo' todo.id %}">Edit</a>

@@ -9,8 +9,8 @@ class TodoModel(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     completed = models.BooleanField(default=False)
-    deadline = models.DateTimeField(default=timezone.now(),
-                                    validators=[MinValueValidator(limit_value=timezone.now())])
+    deadline = models.DateField(default=timezone.now().date(),
+                                validators=[MinValueValidator(limit_value=timezone.now().date())])
 
     def __str__(self):
         return self.title
