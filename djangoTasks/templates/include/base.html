@@ -10,8 +10,9 @@
               integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <link rel="stylesheet" href="{% static 'admin/jquery.ui.datepicker.jalali/themes/base/jquery-ui.min.css' %}">
     </head>
-    <body>
+    <body style="background-color: hsl(240, 100%, 90%);">
         {% include "include/navbar.html" %}
+        {% include "include/message.html" %}
         <main class="row flex-wrap justify-content-around">
             {% block Content %}{% endblock %}
         </main>

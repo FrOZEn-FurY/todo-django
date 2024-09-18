@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     # Local apps
     "todos.apps.TodosConfig",
+    "accounts.apps.AccountsConfig",
 
     # Third-party apps
     'jalali_date',
