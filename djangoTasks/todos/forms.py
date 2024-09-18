@@ -13,7 +13,7 @@ class AddTodoForm(ModelForm):
 
     class Meta:
         model = TodoModel
-        fields = "__all__"
+        exclude = ['author',]
         widgets = {
             "description": Textarea(attrs={"cols": 40, "rows": 15, "class": "form-control",
                                            "style": "resize: none;"}),

@@ -17,6 +17,9 @@
                     <button class="btn btn-outline-danger" style="width: 100%;" type="submit">Delete</button>
                 </form>
             </div>
+            <div class="card-footer">
+                Author: {{ todo.author.username }}
+            </div>
         </section>
     {% empty %}
         <h1>There are no todos yet.</h1>

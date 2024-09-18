@@ -2,6 +2,9 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import TodoModel
 from .forms import AddTodoForm
 from khayyam import JalaliDatetime
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from django.shortcuts import redirect
 
 
 class ShowTodos(ListView):
@@ -25,21 +28,39 @@ class ShowTodos(ListView):
         return todos
 
 
-class AddTodo(CreateView):
+class AddTodo(LoginRequiredMixin, CreateView):
     template_name = "todos/addTodo.html"
     model = TodoModel
     form_class = AddTodoForm
     success_url = '/'
 
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
-class DeleteTodo(DeleteView):
+
+class DeleteTodo(LoginRequiredMixin, DeleteView):
     model = TodoModel
     success_url = '/'
 
+    def dispatch(self, request, *args, **kwargs):
+        id = kwargs['pk']
+        if TodoModel.objects.get(id=id).author.username != request.user.username:
+            messages.warning(request, "You can't delete a todo that is not yours!", extra_tags='warning')
+            return redirect('/')
+        return super().dispatch(request, *args, **kwargs)
 
-class EditTodo(UpdateView):
+
+class EditTodo(LoginRequiredMixin, UpdateView):
     template_name = 'todos/editTodo.html'
     model = TodoModel
     form_class = AddTodoForm
     success_url = '/'
+
+    def dispatch(self, request, *args, **kwargs):
+        id = kwargs['pk']
+        if TodoModel.objects.get(id=id).author.username != request.user.username:
+            messages.warning(request, "You can't edit a todo that is not yours!", extra_tags='warning')
+            return redirect('/')
+        return super().dispatch(request, *args, **kwargs)
 
